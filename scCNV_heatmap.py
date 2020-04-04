@@ -1,5 +1,5 @@
 # scCNV_heatmap
-version = "1.3"
+version = "1.3.1"
 # Stefan Kurtenbach
 # Stefan.Kurtenbach@med.miami.edu
 # make upper and lower ploidies accessable from terminal
@@ -64,6 +64,12 @@ with open(cell_summary_metrics_file) as csv_file:
                             cells.append([row[1], row[14]])
                     else:
                         cells.append([row[1], row[14]])
+            else:
+                if cutoff_lower_ploidy is not None:
+                    if float(row[14]) > cutoff_lower_ploidy:
+                        cells.append([row[1], row[14]])
+                else:
+                    cells.append([row[1], row[14]])
 
 cells.sort(key=lambda x: x[1])
 
