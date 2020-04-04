@@ -1,4 +1,4 @@
-# scCNV_heatmap 1.3 - plotting a ploidy sorted heatmap from scCNV data (10x Genomics)
+# scCNV_heatmap 1.3.1 - plotting a ploidy sorted heatmap from scCNV data (10x Genomics)
 <pre>
 This program is a little memory hungry...
 
