@@ -1,5 +1,5 @@
 # scCNV_heatmap
-version = "1.2"
+version = "1.3"
 # Stefan Kurtenbach
 # Stefan.Kurtenbach@med.miami.edu
 # make upper and lower ploidies accessable from terminal
@@ -22,14 +22,15 @@ def draw_rect(x_coord, y_coord, color, width, hight1, opacity, stroke_thickness)
 colors = ["#4D80FF", "#6CA8FF", "#E2E2E2", "#FFDBA1", "#FFC373", "#FFAC33", "#FF9700", "#FF8500", "#FF5500", "#FF1E00"]
 
 keep_output_SVG = True
-desired_width = float(15000)
-desired_hight = float(20000)
+desired_width = float(1500)
+desired_hight = float(2000)
 
 parser = argparse.ArgumentParser(description='CNV_args')
 parser.add_argument('-o','--output_filename', help='output name', required=False, type=str)
 parser.add_argument('-c','--cnv_call', help='node unmerged cnv call file', required=False, type=str)
 parser.add_argument('-p','--per_cell_summary_metrics', help='per cell summary metrics CNV file', required=False, type=str)
 parser.add_argument('-e','--exclude_noisy_cells', help='set to "no" if noisy cells should be included', required=False, type=str, default="yes")
+parser.add_argument('-f','--cutoff', help='set lower ploidy cutoff value', required=False, type=float, default=None)
 args = vars(parser.parse_args())
 
 print("")
@@ -39,11 +40,14 @@ filename = args['output_filename']
 filename += ".svg"
 
 exclude_cells = args['exclude_noisy_cells']
-print(exclude_cells)
+cutoff_lower_ploidy = args['cutoff']
+
 if exclude_cells == "yes":
     print("Noisy cells will be excluded (default)")
 elif exclude_cells == "no":
     print("Noisy cells will NOT be excluded")
+
+
 
 CNV_data = args['cnv_call']
 
@@ -54,11 +58,12 @@ with open(cell_summary_metrics_file) as csv_file:
     for x, row in enumerate(csv_reader):
         if x > 0:
             if exclude_cells == "yes":
-                if str(row[17]) == "0":
-                    cells.append([row[1], row[14]])
-            else:
-                if float(row[14]) > 1.1:
-                    cells.append([row[1], row[14]])
+                if str(row[17]) == "0": # noisy cells are 1
+                    if cutoff_lower_ploidy is not None:
+                        if float(row[14]) > cutoff_lower_ploidy:
+                            cells.append([row[1], row[14]])
+                    else:
+                        cells.append([row[1], row[14]])
 
 cells.sort(key=lambda x: x[1])
 
@@ -90,7 +95,7 @@ ploidy_bar_hight = desired_hight - chromosome_bar_thickness
 real_hight = desired_hight - chromosome_bar_thickness
 real_width = desired_width - ploidy_bar_width - space_ploidy_bar
 length_factor = float(real_width)/chromosomal_length
-stroke = 8
+stroke = 1
 
 
 if os.path.exists(filename):
@@ -160,8 +165,6 @@ while percentage_change < 100:
         percentage_change = 100
     ploidy_position_percentages.append(percentage_change)
     ploidy_counter += 0.1
-
-print(ploidy_position_percentages)
 
 
 start = chromosome_bar_thickness
