@@ -1,16 +1,14 @@
 # scCNV_heatmap 1.3.1 - plotting a ploidy sorted heatmap from scCNV data (10x Genomics)
 <pre>
+
+Python 3
+Dependencies: csv, argparse, cairosvg
 This program is a little memory hungry...
-
-
-
-A bar with ploidies will be plotted on the right side of the heatmap.
 
 Note: Current version uses the GRCh37 (hg19) genome. If a different species or genome build is desired, 
 the "chromosome_sizes" list can be adjusted in the python skript.
 
-Python 3
-Dependencies: csv, argparse, cairosvg
+A bar with ploidies will be plotted on the right side of the heatmap.
 
 Usage:
 -o  Output filename
